@@ -4,6 +4,16 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    public void Pause()
+    {
+        Debug.Log("Pausing the game...");
+    }
+
+    public void Play()
+    {
+        Debug.Log("Resuming the game...");
+    }
+
     public void Register(FoxController fox)
     {
         foxes.Add(fox);

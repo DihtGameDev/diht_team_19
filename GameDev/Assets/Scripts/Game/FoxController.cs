@@ -1,10 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 using UnityEngine;
 using System;
 
-public class FoxController : MonoBehaviour
+public class FoxController : MonoBehaviour, IPointerClickHandler
 {
+    public void OnPointerClick(PointerEventData pointerEventData)
+    {
+        Debug.Log(name + " The fox was clicked! (⊙_⊙;)");
+    }
+
+
     public enum State
     {
         Calm,
@@ -24,6 +31,7 @@ public class FoxController : MonoBehaviour
     public State state = State.Calm;
     public float target_search_delay = 0.5f;
     public GameObject target_marker_origin = null;
+    public bool logging = false;
     
     void Start()
     {
@@ -91,8 +99,11 @@ public class FoxController : MonoBehaviour
         {
             target_marker.transform.SetPositionAndRotation(target + Vector3.up * 5, Quaternion.identity);
         }
-        string msg = "Updated target from " + old + " to " + target + " in state " + state;
-        Debug.Log(msg);
+        if (logging)
+        {
+            string msg = "Updated target from " + old + " to " + target + " in state " + state;
+            Debug.Log(msg);
+        }
     }
 
     Vector3 ChooseRandomTargetNear(Vector3 pivot, float maxDistance)
@@ -111,7 +122,10 @@ public class FoxController : MonoBehaviour
             case State.Calm:
                 if (satiety < 30)
                 {
-                    Debug.Log("The fox is hungry!");
+                    if (logging)
+                    {
+                        Debug.Log("The fox is hungry!");
+                    }
                     state = State.Hungry;
                 } else if (satiety > overeating_threshold)
                 {
@@ -145,7 +159,10 @@ public class FoxController : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("The fox is dead :(");
+        if (logging)
+        {
+            Debug.Log("The fox is dead :(");
+        }
         StopAllCoroutines();
         Destroy(this);
     }
