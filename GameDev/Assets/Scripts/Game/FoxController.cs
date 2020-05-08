@@ -36,8 +36,8 @@ public class FoxController : MonoBehaviour, IPointerClickHandler
     void Start()
     {
         controller.Register(this);
-        target_marker = target_marker_origin != null ? Instantiate(target_marker_origin) : null;
-        target = transform.position;
+        target_marker_ = target_marker_origin != null ? Instantiate(target_marker_origin) : null;
+        target_ = transform.position;
         StartCoroutine("SearchForTarget");
     }
     
@@ -59,7 +59,7 @@ public class FoxController : MonoBehaviour, IPointerClickHandler
 
     Vector3 GetDirection()
     {
-        return (target - this.transform.position).normalized;
+        return (target_ - transform.position).normalized;
     }
 
     IEnumerator SearchForTarget()
@@ -73,35 +73,35 @@ public class FoxController : MonoBehaviour, IPointerClickHandler
 
     void UpdateTarget()
     {
-        var old = target;
+        var old = target_;
         switch (state)
         {
             case State.Overate:
             case State.Calm:
-                if ((target - transform.position).magnitude < 2)
+                if ((target_ - transform.position).magnitude < 2)
                 {
-                    target = ChooseRandomTargetNear(transform.position, 20);
+                    target_ = ChooseRandomTargetNear(transform.position, 20);
                 }
                 break;
             case State.Hungry:
-                var position = this.transform.position;
+                var position = transform.position;
                 var food_source = GetClosestFoodSource();
-                target = food_source.transform.position;
+                target_ = food_source.transform.position;
                 break;
             case State.Frenzy:
-                ChooseRandomTargetNear(this.transform.position, 20);
+                ChooseRandomTargetNear(transform.position, 20);
                 break;
             default:
                 break;
 
         }
-        if (target_marker != null)
+        if (target_marker_ != null)
         {
-            target_marker.transform.SetPositionAndRotation(target + Vector3.up * 5, Quaternion.identity);
+            target_marker_.transform.SetPositionAndRotation(target_ + Vector3.up * 5, Quaternion.identity);
         }
         if (logging)
         {
-            string msg = "Updated target from " + old + " to " + target + " in state " + state;
+            string msg = "Updated target from " + old + " to " + target_ + " in state " + state;
             Debug.Log(msg);
         }
     }
@@ -169,7 +169,7 @@ public class FoxController : MonoBehaviour, IPointerClickHandler
 
     FoodSourceBehaviour GetClosestFoodSource()
     {
-        var position = this.transform.position;
+        var position = transform.position;
         return controller.GetClosestFoodSource(position);
     }
 
@@ -180,14 +180,14 @@ public class FoxController : MonoBehaviour, IPointerClickHandler
             return;
         }
         var food_source = GetClosestFoodSource();
-        var position = this.transform.position;
+        var position = transform.position;
         var food_position = food_source.transform.position;
         if ((food_position - position).magnitude < 10)
         {
             satiety += food_source.value * Time.deltaTime;
         }
     }
-    Vector3 target = Vector3.up;
-    FoodSourceBehaviour closestFoodSource;
-    GameObject target_marker = null;
+    private Vector3 target_ = Vector3.up;
+    private FoodSourceBehaviour closest_food_source_;
+    private GameObject target_marker_ = null;
 }

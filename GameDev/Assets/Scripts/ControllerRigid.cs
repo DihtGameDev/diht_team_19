@@ -12,11 +12,12 @@ public class ControllerRigid : MonoBehaviour
     public float moveSpeed = 500000;
     public float gravity = -200;
 
+    [SerializeField]
     private Rigidbody rb;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        
     }
 
     // Update is called once per frame
@@ -30,9 +31,10 @@ public class ControllerRigid : MonoBehaviour
 
     private void ApplyMovement(float moveVertical, float moveHorizontal)
     {
-        rb.AddForce(transform.forward * moveVertical * moveSpeed * Time.deltaTime, ForceMode.Force);
-        rb.AddForce(transform.right * moveHorizontal * moveSpeed * Time.deltaTime, ForceMode.Force);
-        rb.AddForce(transform.up * gravity * Time.deltaTime, ForceMode.Force);
+
+        rb.AddForce(Vector3.forward * moveVertical * moveSpeed * Time.deltaTime, ForceMode.Force);
+        rb.AddForce(Vector3.right * moveHorizontal * moveSpeed * Time.deltaTime, ForceMode.Force);
+        rb.AddForce(Vector3.up * gravity * Time.deltaTime, ForceMode.Force);
     }
 
 

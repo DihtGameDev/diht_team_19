@@ -1,17 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
+    static bool GameIsPaused = false;
+    public GameObject PauseMenuUI;
+
+    public void ExitToMainMenu()
+    {
+        Play();
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
     public void Pause()
     {
-        Debug.Log("Pausing the game...");
+        PauseMenuUI.SetActive(true);
+        Time.timeScale = 0f;
+        GameIsPaused = true;
     }
 
     public void Play()
     {
-        Debug.Log("Resuming the game...");
+        PauseMenuUI.SetActive(false);
+        Time.timeScale = 1f;
+        GameIsPaused = false;
     }
 
     public void Register(FoxController fox)
@@ -48,7 +67,22 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        
+        CheckPressedButtons();
+    }
+
+    void CheckPressedButtons()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (GameIsPaused)
+            {
+                Play();
+            }
+            else
+            {
+                Pause();
+            }
+        }
     }
 
     private List<FoxController> foxes = new List<FoxController>();
