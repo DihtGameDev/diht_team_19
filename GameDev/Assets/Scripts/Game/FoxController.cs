@@ -11,30 +11,38 @@ public class FoxController : MonoBehaviour, IPointerClickHandler
         Debug.Log(name + " The fox was clicked! (⊙_⊙;)");
     }
 
+    public PredatorData data;
 
-    public enum State
-    {
-        Calm,
-        Hungry,
-        Afraid,
-        Frenzy,
-        Dead,
-        Overate
-    }
+    private float moveSpeed;
+    private float satiety;
+    private float hunger_rate;
+    private float starvation_threshold;
+    private float overeating_threshold;
+    private AnimalState state;
+    private float target_search_delay;
+    private bool logging;
 
+    [SerializeField]
     public GameController controller;
-    public float moveSpeed = 1;
-    public float satiety = 50;
-    public float hunger_rate = 1;
-    public float starvation_threshold = 0;
-    public float overeating_threshold = 110;
-    public State state = State.Calm;
-    public float target_search_delay = 0.5f;
+    [SerializeField]
     public GameObject target_marker_origin = null;
-    public bool logging = false;
-    
+
+    void initVariables()
+    {
+        moveSpeed = data.moveSpeed;
+        satiety = data.satiety;
+        hunger_rate = data.hunger_rate;
+        starvation_threshold = data.starvation_threshold;
+        overeating_threshold = data.overeating_threshold;
+        state = data.state;
+        target_search_delay = data.target_search_delay;
+        target_marker_origin = target_marker_origin;
+        logging = data.logging;
+}
+
     void Start()
     {
+        initVariables();
         controller.Register(this);
         target_marker_ = target_marker_origin != null ? Instantiate(target_marker_origin) : null;
         target_ = transform.position;
@@ -53,7 +61,7 @@ public class FoxController : MonoBehaviour, IPointerClickHandler
     void Move()
     {
         Vector3 direction = GetDirection();
-        var speed = state != State.Overate ? moveSpeed : moveSpeed * 0.7; 
+        var speed = state != AnimalState.Overate ? moveSpeed : moveSpeed * 0.7; 
         transform.Translate(direction * moveSpeed * Time.deltaTime);
     }
 
@@ -76,19 +84,19 @@ public class FoxController : MonoBehaviour, IPointerClickHandler
         var old = target_;
         switch (state)
         {
-            case State.Overate:
-            case State.Calm:
+            case AnimalState.Overate:
+            case AnimalState.Calm:
                 if ((target_ - transform.position).magnitude < 2)
                 {
                     target_ = ChooseRandomTargetNear(transform.position, 20);
                 }
                 break;
-            case State.Hungry:
+            case AnimalState.Hungry:
                 var position = transform.position;
                 var food_source = GetClosestFoodSource();
                 target_ = food_source.transform.position;
                 break;
-            case State.Frenzy:
+            case AnimalState.Frenzy:
                 ChooseRandomTargetNear(transform.position, 20);
                 break;
             default:
@@ -119,38 +127,38 @@ public class FoxController : MonoBehaviour, IPointerClickHandler
     {
         switch (state)
         {
-            case State.Calm:
+            case AnimalState.Calm:
                 if (satiety < 30)
                 {
                     if (logging)
                     {
                         Debug.Log("The fox is hungry!");
                     }
-                    state = State.Hungry;
+                    state = AnimalState.Hungry;
                 } else if (satiety > overeating_threshold)
                 {
-                    state = State.Overate;
+                    state = AnimalState.Overate;
                 }
                 break;
-            case State.Hungry:
+            case AnimalState.Hungry:
                 if (satiety > 70)
                 {
-                    state = State.Calm;
+                    state = AnimalState.Calm;
                 } else if (satiety <= starvation_threshold)
                 {
-                    state = State.Dead;
+                    state = AnimalState.Dead;
                     Die();
                 }
                 break;
-            case State.Overate:
+            case AnimalState.Overate:
                 if (satiety < overeating_threshold)
                 {
-                    state = State.Calm;
+                    state = AnimalState.Calm;
                 }
                 break;
-            case State.Afraid:
+            case AnimalState.Afraid:
                 break;
-            case State.Frenzy:
+            case AnimalState.Frenzy:
                 break;
             default:
                 break;
@@ -175,7 +183,7 @@ public class FoxController : MonoBehaviour, IPointerClickHandler
 
     void TryEat()
     {
-        if (state == State.Afraid || state == State.Frenzy || state == State.Overate)
+        if (state == AnimalState.Afraid || state == AnimalState.Frenzy || state == AnimalState.Overate)
         {
             return;
         }
