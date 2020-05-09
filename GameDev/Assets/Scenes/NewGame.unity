@@ -1630,6 +1630,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 20
   zoomSpeed: 150
+  zoomLowLimit: 10
+  zoomHighLimit: 100
 --- !u!1 &1082919946
 GameObject:
   m_ObjectHideFlags: 0

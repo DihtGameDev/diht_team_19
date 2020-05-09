@@ -10,7 +10,9 @@ public class CameraController : MonoBehaviour
 
     public float moveSpeed = 20;
     public float zoomSpeed = 100;
-
+    public float zoomLowLimit = 10.0f;
+    public float zoomHighLimit = 100.0f;
+    
     void Start()
     {
         
@@ -28,12 +30,17 @@ public class CameraController : MonoBehaviour
 
     void ApplyMovement(float moveVertical, float moveHorizontal)
     {
-        transform.Translate(Vector3.up * moveVertical * moveSpeed * Time.deltaTime);
-        transform.Translate(Vector3.right * moveHorizontal * moveSpeed * Time.deltaTime);
+        transform.Translate(Vector3.up * (moveVertical * moveSpeed * Time.deltaTime));
+        transform.Translate(Vector3.right * (moveHorizontal * moveSpeed * Time.deltaTime));
     }
 
     void ApplyZoom(float value)
     {
-        transform.Translate(Vector3.forward * value * zoomSpeed * Time.deltaTime);
+        if (transform.position.y >= zoomHighLimit && value < 0 ||
+            transform.position.y <= zoomLowLimit && value > 0)
+        {
+            return;
+        }
+        transform.Translate(Vector3.forward * (value * zoomSpeed * Time.deltaTime));
     }
 }
