@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
-    static bool GameIsPaused = false;
+    private static bool GameIsPaused = false;
     public GameObject PauseMenuUI;
 
     public void ExitToMainMenu()
@@ -45,7 +45,7 @@ public class GameController : MonoBehaviour
 
     public FoodSourceBehaviour GetClosestFoodSource(Vector3 position)
     {
-        double min_distance = double.PositiveInfinity;
+        var min_distance = double.PositiveInfinity;
         FoodSourceBehaviour answer = null;
 
         foreach (var source in foodSources)
@@ -81,6 +81,25 @@ public class GameController : MonoBehaviour
             else
             {
                 Pause();
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, 100.0f))
+            {
+                if (hit.transform)
+                {
+                    Debug.Log("Found something:");
+                    Debug.Log(hit.transform.gameObject.name);
+                    Clickable cmp;
+                    if (cmp = hit.transform.GetComponent<Clickable>())
+                    {
+                        cmp.OnClick.Invoke();
+                    }
+                }
             }
         }
     }

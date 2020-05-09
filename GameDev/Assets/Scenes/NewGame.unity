@@ -2133,6 +2133,7 @@ GameObject:
   - component: {fileID: 1544099944}
   - component: {fileID: 1544099943}
   - component: {fileID: 1544099947}
+  - component: {fileID: 1544099948}
   m_Layer: 0
   m_Name: Fox
   m_TagString: Untagged
@@ -2229,6 +2230,32 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 3d99d2ff4138ab046a11413941754b04, type: 2}
   controller: {fileID: 1485601161}
   target_marker_origin: {fileID: 2082369359}
+--- !u!114 &1544099948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1544099942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d0e2728915640341b2ceb984f6924fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1544099947}
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1561079230
 GameObject:
   m_ObjectHideFlags: 0

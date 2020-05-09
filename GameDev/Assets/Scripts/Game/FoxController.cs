@@ -4,9 +4,9 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using System;
 
-public class FoxController : MonoBehaviour, IPointerClickHandler
+public class FoxController : MonoBehaviour
 {
-    public void OnPointerClick(PointerEventData pointerEventData)
+    public void OnClick()
     {
         Debug.Log(name + " The fox was clicked! (⊙_⊙;)");
     }
