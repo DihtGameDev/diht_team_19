@@ -7,7 +7,21 @@ public class GameController : MonoBehaviour
 {
     private static bool GameIsPaused = false;
     public GameObject PauseMenuUI;
+    public GameObject SidePanelUI;
+    public SidePanelBehaviour SidePanelController;
+    
+    public void ShowSidePanel(PredatorController predator)
+    {
+        SidePanelUI.SetActive(true);
+        SidePanelController.Bind(predator);
+    }
 
+    public void CloseSidePanel()
+    {
+        SidePanelController.Bind(null);
+        SidePanelUI.SetActive(false);
+    }
+    
     public void ExitToMainMenu()
     {
         Play();
@@ -33,9 +47,9 @@ public class GameController : MonoBehaviour
         GameIsPaused = false;
     }
 
-    public void Register(FoxController fox)
+    public void Register(PredatorController predator)
     {
-        foxes.Add(fox);
+        foxes.Add(predator);
     }
 
     public void Register(FoodSourceBehaviour source)
@@ -92,18 +106,20 @@ public class GameController : MonoBehaviour
             {
                 if (hit.transform)
                 {
-                    Debug.Log("Found something:");
-                    Debug.Log(hit.transform.gameObject.name);
                     Clickable cmp;
                     if (cmp = hit.transform.GetComponent<Clickable>())
                     {
                         cmp.OnClick.Invoke();
+                    }
+                    else
+                    {
+                        CloseSidePanel();
                     }
                 }
             }
         }
     }
 
-    private List<FoxController> foxes = new List<FoxController>();
+    private List<PredatorController> foxes = new List<PredatorController>();
     private List<FoodSourceBehaviour> foodSources = new List<FoodSourceBehaviour>();
 }
