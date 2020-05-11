@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour
     
     public void ExitToMainMenu()
     {
-        Play();
+        PlayWithPause();
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -33,16 +33,26 @@ public class GameController : MonoBehaviour
         Application.Quit();
     }
 
-    public void Pause()
+    public void PauseWithMenu()
     {
         PauseMenuUI.SetActive(true);
+        Pause();
+    }
+
+    public void Pause()
+    {
         Time.timeScale = 0f;
         GameIsPaused = true;
     }
 
-    public void Play()
+    public void PlayWithPause()
     {
         PauseMenuUI.SetActive(false);
+        Play();
+    }
+
+    public void Play()
+    {
         Time.timeScale = 1f;
         GameIsPaused = false;
     }
@@ -90,11 +100,11 @@ public class GameController : MonoBehaviour
         {
             if (GameIsPaused)
             {
-                Play();
+                PlayWithPause();
             }
             else
             {
-                Pause();
+                PauseWithMenu();
             }
         }
 
