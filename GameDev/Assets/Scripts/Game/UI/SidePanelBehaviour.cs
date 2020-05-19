@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -27,7 +25,7 @@ public class SidePanelBehaviour : MonoBehaviour
         {
             status.SetText("State: " + GetStateString(predator_.GetState()));
             title.SetText(predator_.GetName());
-            satiety.SetText("Satiety: " + predator_.GetSatiety().ToString());
+            satiety.SetText("Satiety: " + predator_.GetSatiety().ToString("0"));
         }      
     }
 
