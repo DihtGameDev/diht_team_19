@@ -1,6 +1,7 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SidePanelBehaviour : MonoBehaviour
 {
@@ -11,48 +12,23 @@ public class SidePanelBehaviour : MonoBehaviour
     private TextMeshProUGUI status;
     
     [SerializeField]
-    private TextMeshProUGUI satiety;
+    private TextMeshProUGUI info;
 
-    private PredatorController predator_;
-    public void Bind(PredatorController predator)
+    private Displayable active_;
+    public void Bind(Displayable obj)
     {
-        predator_ = predator;
+        active_ = obj;
     }
 
     void Update()
     {
-        if (predator_ != null)
+        if (active_ != null)
         {
-            status.SetText("State: " + GetStateString(predator_.GetState()));
-            title.SetText(predator_.GetName());
-            satiety.SetText("Satiety: " + predator_.GetSatiety().ToString("0"));
+            status.SetText(active_.GetStatus());
+            title.SetText(active_.GetTitle());
+            info.SetText(active_.GetInfo());
         }      
     }
 
-    private string GetStateString(AnimalState state)
-    {
-        switch (state)
-        {
-            case AnimalState.Calm:
-                return "Calm";
-                break;
-            case AnimalState.Hungry:
-                return "Hungry";
-                break;
-            case AnimalState.Afraid:
-                return "Afraid";
-                break;
-            case AnimalState.Frenzy:
-                return "Frenzy";
-                break;
-            case AnimalState.Dead:
-                return "Dead";
-                break;
-            case AnimalState.Overate:
-                return "Overate";
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(state), state, null);
-        }   
-    }
+    
 }

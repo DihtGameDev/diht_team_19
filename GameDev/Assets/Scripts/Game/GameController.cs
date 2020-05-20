@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour
 
 
     private static bool GameIsPaused;
-    private PredatorController CurrentActive;
+    private Displayable CurrentActive;
     private readonly List<FoodSourceBehaviour> foodSources = new List<FoodSourceBehaviour>();
 
     [SerializeField] public GameObject foxPrefab;
@@ -22,7 +22,11 @@ public class GameController : MonoBehaviour
 
     [SerializeField] public GameObject wolfPrefab;
     [SerializeField] public GameInfoBehaviour gameInfo;
-    
+
+    public void upgradeStats(int stat_id, int player_id)
+    {
+        
+    }
     public static GameController Get()
     {
         return singleton;
@@ -33,10 +37,10 @@ public class GameController : MonoBehaviour
         if (singleton == null) singleton = gc;
     }
 
-    public void ShowSidePanel(PredatorController predator)
+    public void ShowSidePanel(Displayable obj)
     {
         SidePanelUI.SetActive(true);
-        SidePanelController.Bind(predator);
+        SidePanelController.Bind(obj);
     }
 
     public void CloseSidePanel()
@@ -45,10 +49,10 @@ public class GameController : MonoBehaviour
         SidePanelUI.SetActive(false);
     }
 
-    public void SetActive(PredatorController predator)
+    public void SetActive(Displayable obj)
     {
-        CurrentActive = predator;
-        ShowSidePanel(predator);
+        CurrentActive = obj;
+        ShowSidePanel(obj);
     }
 
     public void UnsetActive()
@@ -113,6 +117,11 @@ public class GameController : MonoBehaviour
     public void Register(FoodSourceBehaviour source)
     {
         foodSources.Add(source);
+    }
+
+    public void Unregister(FoodSourceBehaviour source)
+    {
+        foodSources.Remove(source);
     }
 
     public FoodSourceBehaviour GetClosestFoodSource(Vector3 position)

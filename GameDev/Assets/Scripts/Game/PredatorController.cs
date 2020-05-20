@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class PredatorController : MonoBehaviour
+public class PredatorController : Displayable
 {
     private bool active;
     private FoodSourceBehaviour closest_food_source_;
@@ -28,17 +28,32 @@ public class PredatorController : MonoBehaviour
 
     public void OnClick()
     {
-        Debug.Log(GetName() + " The fox was clicked! (⊙_⊙;)");
+        Debug.Log(GetName() + " was clicked! (⊙_⊙;)");
         controller.SetActive(this);
         active = true;
         target_marker.SetActive(true);
         UpdateTargetMarker();
     }
 
-    public void AfterClick()
+    public override void AfterClick()
     {
         active = false;
         target_marker.SetActive(false);
+    }
+
+    public override string GetTitle()
+    {
+        return GetName();
+    }
+
+    public override string GetInfo()
+    {
+        return "Satiety " + satiety.ToString("0");
+    }
+
+    public override string GetStatus()
+    {
+        return GetStateString(state);
     }
 
     public virtual string GetName()
@@ -46,6 +61,36 @@ public class PredatorController : MonoBehaviour
         return "Predator";
     }
 
+    private string GetStateString(AnimalState state)
+    {
+        switch (state)
+        {
+            case AnimalState.Calm:
+                return "Calm";
+                break;
+            case AnimalState.Hungry:
+                return "Hungry";
+                break;
+            case AnimalState.Afraid:
+                return "Afraid";
+                break;
+            case AnimalState.Frenzy:
+                return "Frenzy";
+                break;
+            case AnimalState.Dead:
+                return "Dead";
+                break;
+            case AnimalState.Overate:
+                return "Overate";
+                break;
+            case AnimalState.Eating:
+                return "Eating";
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(state), state, null);
+        }   
+    }
+    
     public AnimalState GetState()
     {
         return state;
@@ -158,7 +203,7 @@ public class PredatorController : MonoBehaviour
             case AnimalState.Calm:
                 if (satiety < 30)
                 {
-                    if (logging) Debug.Log("The fox is hungry!");
+                    if (logging) Debug.Log("The " + GetName() + " is hungry!");
                     state = AnimalState.Hungry;
                 }
                 else if (satiety > overeating_threshold)
@@ -168,16 +213,18 @@ public class PredatorController : MonoBehaviour
 
                 break;
             case AnimalState.Hungry:
-                if (satiety > 70)
+                var food_source = GetClosestFoodSource();
+                var position = transform.position;
+                var food_position = food_source.transform.position;
+                if ((food_position - position).magnitude < 4)
                 {
-                    state = AnimalState.Calm;
+                    state = AnimalState.Eating;
                 }
-                else if (satiety <= starvation_threshold)
+                if (satiety <= starvation_threshold)
                 {
                     state = AnimalState.Dead;
                     Die();
                 }
-
                 break;
             case AnimalState.Overate:
                 if (satiety < overeating_threshold) state = AnimalState.Calm;
@@ -187,6 +234,12 @@ public class PredatorController : MonoBehaviour
             case AnimalState.Frenzy:
                 break;
             case AnimalState.Dead:
+                break;
+            case AnimalState.Eating:
+                if (satiety > 70)
+                {
+                    state = AnimalState.Calm;
+                }
                 break;
         }
     }
@@ -208,10 +261,11 @@ public class PredatorController : MonoBehaviour
 
     private void TryEat()
     {
-        if (state == AnimalState.Afraid || state == AnimalState.Frenzy || state == AnimalState.Overate) return;
+        if (state != AnimalState.Eating) return;
         var food_source = GetClosestFoodSource();
         var position = transform.position;
         var food_position = food_source.transform.position;
-        if ((food_position - position).magnitude < 10) satiety += food_source.value * Time.deltaTime;
+        if ((food_position - position).magnitude < 10) satiety += food_source.GetFood(Time.deltaTime);
+        else state = AnimalState.Calm;
     }
 }

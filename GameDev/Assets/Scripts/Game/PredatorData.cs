@@ -7,7 +7,8 @@ public enum AnimalState
     Afraid,
     Frenzy,
     Dead,
-    Overate
+    Overate,
+    Eating
 }
 
 [CreateAssetMenu(
