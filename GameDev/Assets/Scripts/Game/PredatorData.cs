@@ -18,7 +18,7 @@ public enum AnimalState
 public class PredatorData : ScriptableObject
 {
     [SerializeField]
-    public float moveSpeed = 1;
+    public float moveSpeed = 2;
     [SerializeField]
     public float satiety = 50;
     [SerializeField]

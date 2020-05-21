@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,7 +12,7 @@ public class PredatorController : Displayable
 
     private GameController controller;
 
-    public PredatorData data;
+    private PredatorData data;
     private float hunger_rate;
     private bool logging;
     private float moveSpeed;
@@ -21,11 +23,23 @@ public class PredatorController : Displayable
     private float starvation_threshold;
     private AnimalState state;
     private Vector3 target_ = Vector3.up;
+    public delegate void AdditionalLogic();
 
+    private AdditionalLogic logic = () => {  };
+    
     [SerializeField] public GameObject target_marker;
 
     private float target_search_delay;
 
+    public void SetMoveSpeed(float val)
+    {
+        moveSpeed = val;
+    }
+
+    public void SetHungerRate(float val)
+    {
+        hunger_rate = val;
+    }
     public void OnClick()
     {
         Debug.Log(GetName() + " was clicked! (⊙_⊙;)");
@@ -67,25 +81,18 @@ public class PredatorController : Displayable
         {
             case AnimalState.Calm:
                 return "Calm";
-                break;
             case AnimalState.Hungry:
                 return "Hungry";
-                break;
             case AnimalState.Afraid:
                 return "Afraid";
-                break;
             case AnimalState.Frenzy:
                 return "Frenzy";
-                break;
             case AnimalState.Dead:
                 return "Dead";
-                break;
             case AnimalState.Overate:
                 return "Overate";
-                break;
             case AnimalState.Eating:
                 return "Eating";
-                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }   
@@ -104,6 +111,8 @@ public class PredatorController : Displayable
 
     private void InitVariables()
     {
+        controller = GameController.Get();
+        data = controller.players[owner].data;
         moveSpeed = data.moveSpeed;
         satiety = data.satiety;
         hunger_rate = data.hunger_rate;
@@ -112,7 +121,7 @@ public class PredatorController : Displayable
         state = data.state;
         target_search_delay = data.target_search_delay;
         logging = data.logging;
-        controller = GameController.Get();
+        
     }
 
     private void Start()
@@ -130,10 +139,16 @@ public class PredatorController : Displayable
         ChangeState();
         Move();
         TryEat();
+        logic();
     }
 
+    private List<AnimalState> nonMovable = new List<AnimalState> {AnimalState.Dead, AnimalState.Eating};
     private void Move()
     {
+        if (nonMovable.Contains(state))
+        {
+            return;
+        }
         var direction = GetDirection();
         var speed = state != AnimalState.Overate ? moveSpeed : moveSpeed * 0.7;
         transform.Translate(direction * moveSpeed * Time.deltaTime);
@@ -166,6 +181,11 @@ public class PredatorController : Displayable
             case AnimalState.Hungry:
                 var position = transform.position;
                 var food_source = GetClosestFoodSource();
+                if (food_source == null)
+                {
+                    target_ = ChooseRandomTargetNear(transform.position, 10);
+                    break;
+                }
                 target_ = food_source.transform.position;
                 break;
             case AnimalState.Frenzy:
@@ -215,8 +235,8 @@ public class PredatorController : Displayable
             case AnimalState.Hungry:
                 var food_source = GetClosestFoodSource();
                 var position = transform.position;
-                var food_position = food_source.transform.position;
-                if ((food_position - position).magnitude < 4)
+                
+                if ((food_source != null) && (food_source.transform.position - position).magnitude < 4)
                 {
                     state = AnimalState.Eating;
                 }
@@ -263,6 +283,11 @@ public class PredatorController : Displayable
     {
         if (state != AnimalState.Eating) return;
         var food_source = GetClosestFoodSource();
+        if (food_source == null)
+        {
+            state = AnimalState.Hungry;
+            return;
+        }
         var position = transform.position;
         var food_position = food_source.transform.position;
         if ((food_position - position).magnitude < 10) satiety += food_source.GetFood(Time.deltaTime);

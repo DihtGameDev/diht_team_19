@@ -15,18 +15,14 @@ public class GameController : MonoBehaviour
 
     public GameObject PauseMenuUI;
 
-    private List<List<PredatorController>> predator_factions;
+    public List<Player> players;
     public SidePanelBehaviour SidePanelController;
     public GameObject SidePanelUI;
     public GameObject Starter;
 
     [SerializeField] public GameObject wolfPrefab;
     [SerializeField] public GameInfoBehaviour gameInfo;
-
-    public void upgradeStats(int stat_id, int player_id)
-    {
-        
-    }
+    
     public static GameController Get()
     {
         return singleton;
@@ -98,19 +94,19 @@ public class GameController : MonoBehaviour
 
     public void Register(PredatorController predator, int player_id)
     {
-        predator_factions[player_id].Add(predator);
+        players[player_id].predators.Add(predator);
         if (player_id == 0)
         {
-            gameInfo.UpdateAliveCount(predator_factions[0].Count);
+            gameInfo.UpdateAliveCount(players[player_id].predators.Count);
         }
     }
 
     public void Unregister(PredatorController predator, int player_id)
     {
-        predator_factions[player_id].Remove(predator);
+        players[player_id].predators.Remove(predator);
         if (player_id == 0)
         {
-            gameInfo.UpdateAliveCount(predator_factions[0].Count);
+            gameInfo.UpdateAliveCount(players[player_id].predators.Count);
         }
     }
 
@@ -189,8 +185,8 @@ public class GameController : MonoBehaviour
     public void Choose(string choice)
     {
         GameSettings.chosen = choice;
-        predator_factions = new List<List<PredatorController>>(GameSettings.number_of_players);
-        for (var i = 0; i < GameSettings.number_of_players; ++i) predator_factions.Add(new List<PredatorController>());
+        players = new List<Player>(GameSettings.number_of_players);
+        for (var i = 0; i < GameSettings.number_of_players; ++i) players.Add(new Player());
 
         Spawn(5, choice, new Vector3(500, 0, 400), 0);
         Starter.SetActive(false);
