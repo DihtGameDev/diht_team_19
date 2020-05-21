@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum AnimalState
 {
@@ -9,7 +7,8 @@ public enum AnimalState
     Afraid,
     Frenzy,
     Dead,
-    Overate
+    Overate,
+    Eating
 }
 
 [CreateAssetMenu(
@@ -19,7 +18,7 @@ public enum AnimalState
 public class PredatorData : ScriptableObject
 {
     [SerializeField]
-    public float moveSpeed = 1;
+    public float moveSpeed = 2;
     [SerializeField]
     public float satiety = 50;
     [SerializeField]
