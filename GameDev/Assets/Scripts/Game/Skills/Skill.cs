@@ -66,7 +66,11 @@ public class Skill
             if (player.data.logging) Debug.Log("Improved speed");
         });
     }
+    
+    public static readonly Skill foxUnique = new Skill("Fox unique", "Unique fox skill", 0, new List<Skill>{foxUnique2}, (int pid) => {});
 
+    public static readonly Skill foxUnique2 = new Skill("Fox unique 2", "Second unique fox skill", 0, new List<Skill>(), (int pid) => {});
+    
     public static readonly Skill initial = new Skill("", "", 0, new List<Skill> {speed(1), hunger(1)}, (int pid) => { });
     
     private Skill(string name, string description, uint price, List<Skill> next, activator act)

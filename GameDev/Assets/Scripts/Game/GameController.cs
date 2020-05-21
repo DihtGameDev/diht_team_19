@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = System.Random;
 
 public class GameController : MonoBehaviour
 {
     private static GameController singleton;
-
+    private static System.Random rnd = new Random();
 
     private static bool GameIsPaused;
     private Displayable CurrentActive;
@@ -165,6 +167,7 @@ public class GameController : MonoBehaviour
         {
             RaycastHit hit;
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            UnsetActive();
             if (Physics.Raycast(ray, out hit, 100.0f))
                 if (hit.transform)
                 {
@@ -176,19 +179,44 @@ public class GameController : MonoBehaviour
                     else
                     {
                         CloseSidePanel();
-                        UnsetActive();
                     }
                 }
         }
     }
 
+    private string[] predator_types = { "fox", "wolf" };
+
+    private void initUpgradeTree(string choice, Player player)
+    {
+        switch (choice)
+        {
+            case "fox":
+                player.tree.Open(Skill.foxUnique);
+                break;
+            case "wolf":
+                break;
+            default:
+                break;
+        }
+    }
     public void Choose(string choice)
     {
         GameSettings.chosen = choice;
         players = new List<Player>(GameSettings.number_of_players);
-        for (var i = 0; i < GameSettings.number_of_players; ++i) players.Add(new Player());
 
-        Spawn(5, choice, new Vector3(500, 0, 400), 0);
+        for (var i = 0; i < GameSettings.number_of_players; ++i)
+        {
+            var predator_type = choice;
+            if (i > 0)
+            {
+                predator_type = predator_types[rnd.Next(predator_types.Length)];
+            }
+            var player = new Player();
+            initUpgradeTree(predator_type, player);
+            players.Add(player);
+            Spawn(5, predator_type, new Vector3(500, 0, 400), i);
+        }
+        
         Starter.SetActive(false);
         Play();
     }

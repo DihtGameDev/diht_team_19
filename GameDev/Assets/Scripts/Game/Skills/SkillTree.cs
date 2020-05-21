@@ -19,6 +19,11 @@ public class SkillTree
         return answer;
     }
 
+    public void Open(Skill skill)
+    {
+        reachable.Add(skill);
+    }
+    
     private List<Skill> GetReachableSkills()
     {
         return reachable.ToList();
