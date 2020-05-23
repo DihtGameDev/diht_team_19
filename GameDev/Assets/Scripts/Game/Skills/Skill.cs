@@ -15,7 +15,7 @@ public class Skill
         return description;
     }
 
-    public uint GetPrice()
+    public int GetPrice()
     {
         return price;
     }
@@ -114,17 +114,18 @@ public class Skill
     
     public static readonly Skill initial = new Skill("", "", 0, new List<Skill> {speed(1), hunger(1)}, (int pid) => { });
     
-    private Skill(string name, string description, uint price, List<Skill> next, activator act)
+    private Skill(string name, string description, int price, List<Skill> next, activator act)
     {
         this.name = name;
         this.description = description;
         this.act = act;
         this.next = next;
+        this.price = price;
     }
 
     delegate void activator(int player_id);
     private activator act;
-    private uint price;
+    private int price;
     private List<Skill> next;
     private string name;
     private string description;

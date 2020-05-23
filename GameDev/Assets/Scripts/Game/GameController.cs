@@ -35,6 +35,11 @@ public class GameController : MonoBehaviour
         if (singleton == null) singleton = gc;
     }
 
+    public void updatePointInfo()
+    {
+        gameInfo.UpdatePointsCount(players[0].points);
+    }
+    
     public void ShowSidePanel(Displayable obj)
     {
         SidePanelUI.SetActive(true);
@@ -144,7 +149,7 @@ public class GameController : MonoBehaviour
     {
         Pause();
         init(this);
-
+        
         Debug.Log("The game has started!");
     }
 
@@ -219,6 +224,8 @@ public class GameController : MonoBehaviour
         }
         
         Starter.SetActive(false);
+
+        updatePointInfo();
         Play();
     }
 

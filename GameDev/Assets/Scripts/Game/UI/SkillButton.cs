@@ -37,7 +37,20 @@ public class SkillButton : MonoBehaviour, IPointerClickHandler
         {
             if (binded != null)
             {
-                GameController.Get().players[0].tree.Activate(binded, 0);
+                var player = GameController.Get().players[0];
+                
+                if (player.points >= binded.GetPrice())
+                {
+                    Debug.Log(player.points);
+                    Debug.Log(binded.GetPrice());
+                    player.tree.Activate(binded, 0);
+                    player.points -= binded.GetPrice();
+                    GameController.Get().updatePointInfo();
+                }
+                else
+                {
+                    Debug.Log("Not enough points!");
+                }
             }
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
