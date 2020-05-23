@@ -32,11 +32,16 @@ public class Skill
 
     public static Skill hunger(int iteration)
     {
+        List<Skill> next;
         if (iteration > 3)
         {
-            return null;
+            next = new List<Skill>();
         }
-        return new Skill("Hunger " + iteration, "Your creatures can live without food longer", 10, new List<Skill>{hunger(iteration + 1)},  (int player_id) =>
+        else
+        {
+            next = new List<Skill> {hunger(iteration + 1)};
+        }
+        return new Skill("Hunger " + iteration, "Your creatures can live without food longer", 10, next,  (int player_id) =>
         {
             const float min_hunger_rate = 0.7f;
             var player = GameController.Get().players[player_id];
@@ -50,11 +55,16 @@ public class Skill
     }
     public static Skill speed(int iteration)
     {
+        List<Skill> next;
         if (iteration > 3)
         {
-            return null;
+            next = new List<Skill>();
         }
-        return new Skill("Speed " + iteration, "Increase speed of all your creatures", 10, new List<Skill>{speed(iteration + 1)},  (int player_id) =>
+        else
+        {
+            next = new List<Skill> {speed(iteration + 1)};
+        }
+        return new Skill("Speed " + iteration, "Increase speed of all your creatures", 10, next,  (int player_id) =>
         {
             const float max_movemenet_speed = 15;
             var player = GameController.Get().players[player_id];

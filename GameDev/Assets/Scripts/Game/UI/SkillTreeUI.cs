@@ -7,7 +7,7 @@ public class SkillTreeUI : MonoBehaviour
 {
     [SerializeField] private List<SkillButton> alternatives;
 
-    public void PrepareUI()
+    public void UpdateUI()
     {
         var player = GameController.Get().players[0];
         var tree = player.tree;
@@ -22,5 +22,13 @@ public class SkillTreeUI : MonoBehaviour
         {
             alternatives[i].bind(skills[i]);
         }
+    }
+
+    public void ForceUpdate()
+    {
+        var player = GameController.Get().players[0];
+        var tree = player.tree;
+        tree.ForceUpdateAvailable(alternatives.Count);
+        UpdateUI();
     }
 }

@@ -10,6 +10,8 @@ public class SkillButton : MonoBehaviour, IPointerClickHandler
    
     [SerializeField] private TextMeshProUGUI buttonText;
     [SerializeField] private Button button;
+    [SerializeField] private SkillTreeUI ui;
+    
     private Skill binded = null;
     private string description;
 
@@ -42,6 +44,6 @@ public class SkillButton : MonoBehaviour, IPointerClickHandler
         {
             Debug.Log(description);
         }
-            
+        ui.UpdateUI();
     }
 }
