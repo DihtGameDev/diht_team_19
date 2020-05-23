@@ -80,6 +80,37 @@ public class Skill
     public static readonly Skill foxUnique = new Skill("Fox unique", "Unique fox skill", 0, new List<Skill>{foxUnique2}, (int pid) => {});
 
     public static readonly Skill foxUnique2 = new Skill("Fox unique 2", "Second unique fox skill", 0, new List<Skill>(), (int pid) => {});
+
+    public static Skill wolfUnique(int iteration)
+    {
+        List<Skill> next;
+        if (iteration > 5)
+        {
+            next = new List<Skill>();
+        }
+        else
+        {
+            next = new List<Skill> {wolfUnique(iteration + 1)};
+        }
+        
+        return new Skill("Engineering " + iteration, "Increase engineering ability", 12, next,  (int player_id) =>
+        {
+            PredatorController.AdditionalLogic l = (wolf) =>
+            {
+                if (wolf.IsActive())
+                {
+                    Debug.Log("ADDITIONAL WOLF WAS CLICKED!!!");
+                }
+            }; 
+
+            var player = GameController.Get().players[player_id];
+            foreach (var pr in player.predators)
+            {
+                pr.AddLogic(l);
+            }
+            if (player.data.logging) Debug.Log("Added logic!");
+        });
+    }
     
     public static readonly Skill initial = new Skill("", "", 0, new List<Skill> {speed(1), hunger(1)}, (int pid) => { });
     

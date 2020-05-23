@@ -194,6 +194,7 @@ public class GameController : MonoBehaviour
                 player.tree.Open(Skill.foxUnique);
                 break;
             case "wolf":
+                player.tree.Open(Skill.wolfUnique(1));
                 break;
             default:
                 break;

@@ -22,9 +22,18 @@ public class PredatorController : Displayable
     private float starvation_threshold;
     private AnimalState state;
     private Vector3 target_ = Vector3.up;
-    public delegate void AdditionalLogic();
+    public delegate void AdditionalLogic(PredatorController a);
 
-    private AdditionalLogic logic = () => {  };
+    private AdditionalLogic logic = (predator) => {  };
+
+    public bool IsActive()
+    {
+        return active;
+    }
+    public void AddLogic(AdditionalLogic l)
+    {
+        logic += l;
+    }
     
     [SerializeField] public GameObject target_marker;
 
@@ -138,7 +147,7 @@ public class PredatorController : Displayable
         ChangeState();
         Move();
         TryEat();
-        logic();
+        logic(this);
     }
 
     private List<AnimalState> nonMovable = new List<AnimalState> {AnimalState.Dead, AnimalState.Eating};
