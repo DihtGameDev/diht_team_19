@@ -217,11 +217,7 @@ public class PredatorController : Displayable
 
     private Vector3 ChooseRandomTargetNear(Vector3 pivot, float maxDistance)
     {
-        var random_target = Vector3.zero;
-        var angle = Random.Range(0, (float) Math.PI * 2);
-        var magnitude = Random.Range(0.01f, maxDistance);
-        random_target = new Vector3(magnitude * (float) Math.Sin(angle), 0, magnitude * (float) Math.Cos(angle));
-        return random_target + pivot;
+        return GameController.GetPlaceNear(pivot, 0.01f, maxDistance);
     }
 
     private void ChangeState()
@@ -277,8 +273,7 @@ public class PredatorController : Displayable
         if (logging) Debug.Log("The fox is dead :(");
         StopAllCoroutines();
         if (owner >= 0) controller.Unregister(this, owner);
-
-        Destroy(this);
+        gameObject.SetActive(false);
     }
 
     private FoodSourceBehaviour GetClosestFoodSource()

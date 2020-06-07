@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class FoodSourceBehaviour : Displayable
 {
-    public GameController controller;
     private int value = 10;
     private float amount = 100;
     private bool active = false;
@@ -15,7 +14,8 @@ public class FoodSourceBehaviour : Displayable
     }
     public void OnClick()
     {
-        controller.SetActive(this);
+        Debug.Log("Food source was clicked");
+        GameController.Get().SetActive(this);
         active = true;
     }
 
@@ -41,7 +41,7 @@ public class FoodSourceBehaviour : Displayable
 
     private void Start()
     {
-        controller.Register(this);
+        GameController.Get().Register(this);
     }
 
     public float GetFood(float time)
@@ -54,7 +54,8 @@ public class FoodSourceBehaviour : Displayable
         } 
         else
         {
-            controller.Unregister(this);
+            GameController.Get().Unregister(this);
+            gameObject.SetActive(false);
             return amount;
         }
     }

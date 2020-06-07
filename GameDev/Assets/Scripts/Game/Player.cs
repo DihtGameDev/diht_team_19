@@ -8,4 +8,5 @@ public class Player
     public PredatorData data = new PredatorData();
     public int points = 300;
     public SkillTree tree = new SkillTree();
+    public Vector3 SpawnLocation;
 }
