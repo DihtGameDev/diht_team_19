@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -9,22 +10,24 @@ public class SkillButton : MonoBehaviour, IPointerClickHandler
 {
    
     [SerializeField] private TextMeshProUGUI buttonText;
-    [SerializeField] private Button button;
     [SerializeField] private SkillTreeUI ui;
     
     private Skill binded = null;
     private string description;
-
+    
     public void bind(Skill skill)
     {
         binded = skill;
         if (binded != null)
         {
+            Debug.Log("Binded " + skill.GetName());
             buttonText.SetText(skill.GetName());
             description = skill.GetDescription();
+            buttonText.UpdateFontAsset();
         }
         else
         {
+            Debug.Log("Binded " + "nothing");
             buttonText.SetText("No skills available");
             description = "No skills available";
         }
@@ -41,8 +44,6 @@ public class SkillButton : MonoBehaviour, IPointerClickHandler
                 
                 if (player.points >= binded.GetPrice())
                 {
-                    Debug.Log(player.points);
-                    Debug.Log(binded.GetPrice());
                     player.tree.Activate(binded, 0);
                     player.points -= binded.GetPrice();
                     GameController.Get().updatePointInfo();
@@ -57,6 +58,6 @@ public class SkillButton : MonoBehaviour, IPointerClickHandler
         {
             Debug.Log(description);
         }
-        ui.UpdateUI();
+        ui.UpdateUi();
     }
 }

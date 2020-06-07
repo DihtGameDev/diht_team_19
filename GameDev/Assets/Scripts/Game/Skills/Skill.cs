@@ -77,9 +77,9 @@ public class Skill
         });
     }
     
-    public static readonly Skill foxUnique = new Skill("Fox unique", "Unique fox skill", 0, new List<Skill>{foxUnique2}, (int pid) => {});
-
     public static readonly Skill foxUnique2 = new Skill("Fox unique 2", "Second unique fox skill", 0, new List<Skill>(), (int pid) => {});
+    
+    public static readonly Skill foxUnique = new Skill("Fox unique", "Unique fox skill", 0, new List<Skill>{foxUnique2}, (int pid) => {});
 
     public static Skill wolfUnique(int iteration)
     {

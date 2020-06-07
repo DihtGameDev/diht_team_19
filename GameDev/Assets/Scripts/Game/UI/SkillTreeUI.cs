@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -7,7 +8,12 @@ public class SkillTreeUI : MonoBehaviour
 {
     [SerializeField] private List<SkillButton> alternatives;
 
-    public void UpdateUI()
+    private void OnEnable()
+    {
+        UpdateUi();
+    }
+
+    public void UpdateUi()
     {
         var player = GameController.Get().players[0];
         var tree = player.tree;
@@ -22,6 +28,20 @@ public class SkillTreeUI : MonoBehaviour
         {
             alternatives[i].bind(skills[i]);
         }
+
+        Debug.Log("Available:");
+        foreach (var skill in skills)
+        {
+            if (skill != null)
+            {
+                Debug.Log(skill.GetName());
+            }
+            else
+            {
+                Debug.Log("None");
+            }
+            
+        }
     }
 
     public void ForceUpdate()
@@ -29,6 +49,6 @@ public class SkillTreeUI : MonoBehaviour
         var player = GameController.Get().players[0];
         var tree = player.tree;
         tree.ForceUpdateAvailable(alternatives.Count);
-        UpdateUI();
+        UpdateUi();
     }
 }

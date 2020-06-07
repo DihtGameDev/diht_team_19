@@ -15,31 +15,44 @@ public class SkillTree
     
     public void ForceUpdateAvailable(int number)
     {
-        var list = GetReachableSkills();
-
         available.Clear();
-        for (int i = 0; i < Math.Min(number, list.Count); ++i)
-        {
-            available.Add(list[i]);   
-        }
+        UpdateAvailable(number);
     }
 
     private void UpdateAvailable(int number)
     {
-        var list = GetReachableSkills();
+        // Scan through available and swap all null values for reachable,
+        // But not available skills
+        
+        var updatedAvailable = new List<Skill>(Enumerable.Repeat<Skill>(null, number));
+        var substitutions = GetReachableSkills();
         foreach (var skill in available)
         {
-            list.Remove(skill);
+            substitutions.Remove(skill);
         }
 
+        var indexes = Enumerable.Range(0, substitutions.Count).ToList();
+        var rnd = GameController.rnd;
+        indexes = indexes.OrderBy(x => rnd.Next()).ToList();
+        
         var cur = 0;
-        for (int i = 0; i < available.Count; ++i)
+        for (int i = 0; i < number; ++i)
         {
-            if (cur == list.Count) break;
-            if (available[i] != null) continue;
-            available[i] = list[cur];
-            cur++;
+            if (cur == substitutions.Count && i >= available.Count) break;
+            if (i < available.Count && available[i] != null)
+            {
+                updatedAvailable[i] = available[i];
+            }
+            else
+            {
+                if (cur == substitutions.Count) continue;
+                updatedAvailable[i] = substitutions[indexes[cur]];
+                Debug.Log(cur + " -> " + indexes[cur]);
+                ++cur;
+            }
         }
+
+        available = updatedAvailable;
     }
     
     public void Open(Skill skill)
@@ -49,7 +62,6 @@ public class SkillTree
     
     private List<Skill> GetReachableSkills()
     {
-        Debug.Log(reachable);
         return reachable.ToList();
     }
 
@@ -67,5 +79,6 @@ public class SkillTree
     
     private List<Skill> activated = new List<Skill> {Skill.initial};
     private HashSet<Skill> reachable = new HashSet<Skill>(Skill.initial.GetNext());
+    // Available are those that are available for purchase at UPGRADE menu. Subset of reachable
     private List<Skill> available = new List<Skill>();
 }

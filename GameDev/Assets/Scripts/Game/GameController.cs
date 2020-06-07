@@ -7,7 +7,7 @@ using Random = System.Random;
 public class GameController : MonoBehaviour
 {
     private static GameController singleton;
-    private static System.Random rnd = new Random();
+    public static System.Random rnd = new Random();
 
     private static bool GameIsPaused;
     private Displayable CurrentActive;
