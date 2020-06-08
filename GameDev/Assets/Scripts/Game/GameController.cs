@@ -152,7 +152,7 @@ public class GameController : MonoBehaviour
         foodSources.Remove(source);
         if (foodSources.Count < players.Count * 1.5)
         {
-            SpawnNear(1, food_source_id, GetPlayareaCenter(), 0.01f, GetPlayAreaWidth() / 11 * 3);
+            SpawnNear(1, food_source_id, GetPlayareaCenter(), 0.01f, GetPlayAreaWidth() / 11 * 4);
         }
     }
 
@@ -176,6 +176,30 @@ public class GameController : MonoBehaviour
         return answer;
     }
 
+    public PredatorController GetClosestEnemy(Vector3 position, int player_id)
+    {
+        var min_distance = double.PositiveInfinity;
+        PredatorController answer = null;
+
+        for (var i = 0; i < players.Count; ++i)
+        {
+            if (i == player_id) continue;
+            
+            foreach (var enemy in players[i].predators)
+            {
+                if (!enemy.gameObject.activeSelf) continue;
+            
+                var cur_distance = Vector3.Distance(position, enemy.transform.position);
+                if (cur_distance < min_distance)
+                {
+                    answer = enemy;
+                    min_distance = cur_distance;
+                }
+            }
+        }
+        return answer;
+    }
+    
     private void Start()
     {
         Pause();
@@ -319,11 +343,6 @@ public class GameController : MonoBehaviour
     {
         var prefab = prefabFromString(type);
         var clone = Instantiate(prefab, where, Quaternion.identity);
-        var food_source = clone.GetComponent<FoodSourceBehaviour>();
-        if (food_source)
-        {
-            Register(food_source);
-        }
     }
     
     private void Spawn(string type, Vector3 where, int player)

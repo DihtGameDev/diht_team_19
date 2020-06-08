@@ -20,14 +20,12 @@ public class SkillButton : MonoBehaviour, IPointerClickHandler
         binded = skill;
         if (binded != null)
         {
-            Debug.Log("Binded " + skill.GetName());
             buttonText.SetText(skill.GetName());
             description = skill.GetDescription();
             buttonText.UpdateFontAsset();
         }
         else
         {
-            Debug.Log("Binded " + "nothing");
             buttonText.SetText("No skills available");
             description = "No skills available";
         }

@@ -47,7 +47,6 @@ public class SkillTree
             {
                 if (cur == substitutions.Count) continue;
                 updatedAvailable[i] = substitutions[indexes[cur]];
-                Debug.Log(cur + " -> " + indexes[cur]);
                 ++cur;
             }
         }
@@ -68,7 +67,6 @@ public class SkillTree
     public void Activate(Skill skill, int pid)
     {
         var new_reachable = new HashSet<Skill>(skill.GetNext());
-        Debug.Log(new_reachable.ToString());
         activated.Add(skill);
         reachable.UnionWith(new_reachable);
         reachable.ExceptWith(activated);

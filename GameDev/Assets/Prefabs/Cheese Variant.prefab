@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &8035277150400832451
+--- !u!1001 &1518803562415967646
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10,27 +10,22 @@ PrefabInstance:
     - target: {fileID: 4839206665034506315, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
       propertyPath: m_Size.x
-      value: 60
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 4839206665034506315, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
       propertyPath: m_Size.z
-      value: 60
+      value: 0.03
       objectReference: {fileID: 0}
-    - target: {fileID: 5245273323088198410, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
+    - target: {fileID: 4839206665034506315, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
-      propertyPath: m_Convex
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5245273323088198410, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
-        type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
+      propertyPath: m_Size.y
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 5245273323088198411, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
       propertyPath: m_Name
-      value: Cheese Variant
+      value: Cheese
       objectReference: {fileID: 0}
     - target: {fileID: 5245273323088198412, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
@@ -46,17 +41,17 @@ PrefabInstance:
     - target: {fileID: 5245273323088198415, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 503.78
+      value: 691.8185
       objectReference: {fileID: 0}
     - target: {fileID: 5245273323088198415, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.32
+      value: 1.44
       objectReference: {fileID: 0}
     - target: {fileID: 5245273323088198415, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 500.91
+      value: 600.5272
       objectReference: {fileID: 0}
     - target: {fileID: 5245273323088198415, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
@@ -101,18 +96,17 @@ PrefabInstance:
     - target: {fileID: 5245273323088198415, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 30
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5245273323088198415, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 30
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5245273323088198415, guid: 46aaae1882276c84c8bf7ff5eef2aa1b,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 30
+      value: 50
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5245273323088198410, guid: 46aaae1882276c84c8bf7ff5eef2aa1b, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46aaae1882276c84c8bf7ff5eef2aa1b, type: 3}

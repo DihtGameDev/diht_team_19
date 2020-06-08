@@ -1,13 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class FoodSourceBehaviour : Displayable
 {
+    private static long _id = 0;
     private int value = 10;
     private float amount = 100;
     private bool active = false;
+    private long id = GetNextId();
 
+    public long GetId()
+    {
+        return id;
+    }
+    private static long GetNextId()
+    {
+        return Interlocked.Increment(ref _id);
+    }
     public string GetName()
     {
         return "Food source";
