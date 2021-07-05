@@ -1,21 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class FoodSourceBehaviour : Displayable
 {
-    public GameController controller;
+    private static long _id = 0;
     private int value = 10;
     private float amount = 100;
     private bool active = false;
+    private long id = GetNextId();
 
+    public long GetId()
+    {
+        return id;
+    }
+    private static long GetNextId()
+    {
+        return Interlocked.Increment(ref _id);
+    }
     public string GetName()
     {
         return "Food source";
     }
     public void OnClick()
     {
-        controller.SetActive(this);
+        Debug.Log("Food source was clicked");
+        GameController.Get().SetActive(this);
         active = true;
     }
 
@@ -41,7 +52,7 @@ public class FoodSourceBehaviour : Displayable
 
     private void Start()
     {
-        controller.Register(this);
+        GameController.Get().Register(this);
     }
 
     public float GetFood(float time)
@@ -54,7 +65,8 @@ public class FoodSourceBehaviour : Displayable
         } 
         else
         {
-            controller.Unregister(this);
+            GameController.Get().Unregister(this);
+            gameObject.SetActive(false);
             return amount;
         }
     }

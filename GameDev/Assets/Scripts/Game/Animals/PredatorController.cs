@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Game.Animals;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,20 +13,52 @@ public class PredatorController : Displayable
 
     private GameController controller;
 
+    public List<Ability> battleAbilities;
+    public List<Ability> peacefulAbilities;
     private PredatorData data;
     private float hunger_rate;
     private bool logging;
     private float moveSpeed;
     private float overeating_threshold;
-
+    public int aggression;
+    public float health;
+    public float armor;
+    public float attackPower;
+    public float energy;
+    private float attackRange;
     public int owner = -1;
     private float satiety;
     private float starvation_threshold;
     private AnimalState state;
     private Vector3 target_ = Vector3.up;
-    public delegate void AdditionalLogic();
+    public delegate void AdditionalLogic(PredatorController a);
 
-    private AdditionalLogic logic = () => {  };
+    private AdditionalLogic logic = (predator) => {  };
+
+    public bool IsActive()
+    {
+        return active;
+    }
+    public void AddLogic(AdditionalLogic l)
+    {
+        logic += l;
+    }
+    
+    private IEnumerator CalmDown()
+    {
+        var old_trans = afraid_of;
+        yield return new WaitForSeconds(5);
+        if (state == AnimalState.Afraid && old_trans == afraid_of)
+        {
+            state = AnimalState.Calm;
+        }
+    }
+    public void Scare(PredatorController source)
+    {
+        state = AnimalState.Afraid;
+        afraid_of = source.transform;
+        StartCoroutine("CalmDown");
+    }
     
     [SerializeField] public GameObject target_marker;
 
@@ -61,7 +95,7 @@ public class PredatorController : Displayable
 
     public override string GetInfo()
     {
-        return "Satiety " + satiety.ToString("0");
+        return "Satiety " + satiety.ToString("0") + "\nHealth " + health.ToString("0");
     }
 
     public override string GetStatus()
@@ -92,6 +126,8 @@ public class PredatorController : Displayable
                 return "Overate";
             case AnimalState.Eating:
                 return "Eating";
+            case AnimalState.Fighting:
+                return "Fighting";
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }   
@@ -120,7 +156,14 @@ public class PredatorController : Displayable
         state = data.state;
         target_search_delay = data.target_search_delay;
         logging = data.logging;
-        
+        aggression = data.aggression;
+        health = data.health;
+        attackPower = data.attackPower;
+        attackRange = data.attackRange;
+        armor = data.armor;
+        battleAbilities = data.battleAbilities;
+        peacefulAbilities = data.peacefulAbilities;
+        energy = data.energy;
     }
 
     private void Start()
@@ -138,7 +181,8 @@ public class PredatorController : Displayable
         ChangeState();
         Move();
         TryEat();
-        logic();
+        TryFight();
+        logic(this);
     }
 
     private List<AnimalState> nonMovable = new List<AnimalState> {AnimalState.Dead, AnimalState.Eating};
@@ -190,6 +234,19 @@ public class PredatorController : Displayable
             case AnimalState.Frenzy:
                 ChooseRandomTargetNear(transform.position, 20);
                 break;
+            case AnimalState.Afraid:
+                if (afraid_of != null) target_ = (2 * transform.position - afraid_of.transform.position);
+                break;
+            case AnimalState.Dead:
+                break;
+            case AnimalState.Eating:
+                break;
+            case AnimalState.Fighting:
+                var enemy = GetEnemy();
+                target_ = enemy.transform.position;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
         UpdateTargetMarker();
@@ -208,11 +265,7 @@ public class PredatorController : Displayable
 
     private Vector3 ChooseRandomTargetNear(Vector3 pivot, float maxDistance)
     {
-        var random_target = Vector3.zero;
-        var angle = Random.Range(0, (float) Math.PI * 2);
-        var magnitude = Random.Range(0.01f, maxDistance);
-        random_target = new Vector3(magnitude * (float) Math.Sin(angle), 0, magnitude * (float) Math.Cos(angle));
-        return random_target + pivot;
+        return GameController.GetPlaceNear(pivot, 0.01f, maxDistance);
     }
 
     private void ChangeState()
@@ -228,8 +281,10 @@ public class PredatorController : Displayable
                 else if (satiety > overeating_threshold)
                 {
                     state = AnimalState.Overate;
+                } else if (Random.Range(0, 5000) <= aggression)
+                {
+                    state = AnimalState.Fighting;
                 }
-
                 break;
             case AnimalState.Hungry:
                 var food_source = GetClosestFoodSource();
@@ -239,16 +294,17 @@ public class PredatorController : Displayable
                 {
                     state = AnimalState.Eating;
                 }
-                if (satiety <= starvation_threshold)
-                {
-                    state = AnimalState.Dead;
-                    Die();
-                }
                 break;
             case AnimalState.Overate:
                 if (satiety < overeating_threshold) state = AnimalState.Calm;
                 break;
             case AnimalState.Afraid:
+                if (afraid_of == null || (transform.position - afraid_of.position).magnitude > 15)
+                {
+                    afraid_of = null;
+                    state = AnimalState.Calm;
+                    UpdateTarget();
+                }
                 break;
             case AnimalState.Frenzy:
                 break;
@@ -260,6 +316,15 @@ public class PredatorController : Displayable
                     state = AnimalState.Calm;
                 }
                 break;
+            case AnimalState.Fighting:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        if (satiety <= starvation_threshold)
+        {
+            state = AnimalState.Dead;
+            Die();
         }
     }
 
@@ -268,14 +333,23 @@ public class PredatorController : Displayable
         if (logging) Debug.Log("The fox is dead :(");
         StopAllCoroutines();
         if (owner >= 0) controller.Unregister(this, owner);
-
-        Destroy(this);
+        gameObject.SetActive(false);
     }
 
     private FoodSourceBehaviour GetClosestFoodSource()
     {
         var position = transform.position;
         return controller.GetClosestFoodSource(position);
+    }
+    
+    private PredatorController current_enemy = null;
+    private Transform afraid_of = null;
+    private PredatorController GetEnemy()
+    {
+        if (current_enemy != null) return current_enemy;
+        var position = transform.position;
+        current_enemy = controller.GetClosestEnemy(position, owner);
+        return current_enemy;
     }
 
     private void TryEat()
@@ -291,5 +365,66 @@ public class PredatorController : Displayable
         var food_position = food_source.transform.position;
         if ((food_position - position).magnitude < 10) satiety += food_source.GetFood(Time.deltaTime);
         else state = AnimalState.Calm;
+    }
+
+    private void TryBattleAbility(PredatorController enemy)
+    {
+        var indexes = Enumerable.Range(0, battleAbilities.Count).ToList();
+        var rnd = GameController.rnd;
+        indexes = indexes.OrderBy(x => rnd.Next()).ToList();
+        foreach (var ind in indexes)
+        {
+            if (battleAbilities[ind].Available(this, enemy))
+            {
+                battleAbilities[ind].Apply(this, enemy);
+                break;
+            }
+        }
+    }
+    private void TryFight()
+    {
+        if (state != AnimalState.Fighting) return;
+        var enemy = GetEnemy();
+        if (Random.Range(0, 100) <= 2) TryBattleAbility(enemy);
+        if (enemy == null || !enemy.gameObject.activeSelf)
+        {
+            state = AnimalState.Calm;
+            return;
+        }
+
+        if (!ready) return;
+        var position = transform.position;
+        var enemy_position = enemy.transform.position;
+        if ((enemy_position - position).magnitude < attackRange) Attack(enemy);
+        ready = false;
+        StartCoroutine("Reload");
+
+    }
+
+    private void Damage(PredatorController source)
+    {
+        health -= source.attackPower * (1 - armor);
+        if (health <= 0)
+        {
+            var controller = GameController.Get();
+            controller.players[source.owner].points += 12;
+            controller.updatePointInfo();
+            Die();
+        }
+        else if (health < 10) Scare(source);
+        state = AnimalState.Fighting;
+        current_enemy = source;
+    }
+
+    private bool ready = true;
+    private IEnumerator Reload()
+    {
+        yield return new WaitForSeconds(3);
+        ready = true;
+    }
+    private void Attack(PredatorController enemy)
+    {
+        Debug.Log("Attacked for " + attackPower * (1 - armor));
+        enemy.Damage(this);
     }
 }

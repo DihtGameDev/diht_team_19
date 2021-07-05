@@ -6,6 +6,7 @@ public class Player
 {
     public List<PredatorController> predators = new List<PredatorController>();
     public PredatorData data = new PredatorData();
-    public uint points = 0;
+    public int points = 300;
     public SkillTree tree = new SkillTree();
+    public Vector3 SpawnLocation;
 }

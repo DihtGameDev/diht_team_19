@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using Game.Animals;
+using UnityEngine;
 
 public enum AnimalState
 {
@@ -8,7 +10,8 @@ public enum AnimalState
     Frenzy,
     Dead,
     Overate,
-    Eating
+    Eating,
+    Fighting
 }
 
 [CreateAssetMenu(
@@ -17,6 +20,21 @@ public enum AnimalState
     order = 51)]
 public class PredatorData : ScriptableObject
 {
+    public List<Ability> battleAbilities = new List<Ability>();
+    public List<Ability> peacefulAbilities = new List<Ability>();
+
+    [SerializeField] 
+    public float energy = 0.0f;
+    [SerializeField]
+    public float armor = 0.0f;
+    [SerializeField]
+    public float attackPower = 4;
+    [SerializeField]
+    public float attackRange = 4;
+    [SerializeField]
+    public int aggression = 1;
+    [SerializeField]
+    public float health = 20;
     [SerializeField]
     public float moveSpeed = 2;
     [SerializeField]
